@@ -12,17 +12,16 @@ class SettingsViewController: UIViewController {
     
     @IBOutlet weak var infoContainer: UIView!
     @IBOutlet weak var mainName: UILabel!
-    @IBOutlet weak var middleName: UILabel!
     @IBOutlet weak var grade: UILabel!
     @IBOutlet weak var email: UILabel!
-    @IBOutlet weak var phone: UILabel!
+    @IBOutlet weak var info: UILabel!
     
     func InitUserData(){
-        mainName.text = session.account.GetLastName() + " " + session.account.GetFistName()
-        middleName.text = session.account.GetMiddleName()
-        grade.text = session.account.GetRole()
-        email.text = session.account.GetEmail()
-        phone.text = "Бакалавриат группа БПИ174-2017"
+        let user = session.account!.data.user
+        mainName.text = user.fio
+        grade.text = session.account!.GetRole()
+        email.text = user.id
+        info.text = user.info
     }
     
     override func viewDidLoad() {
@@ -43,7 +42,7 @@ class SettingTableViewController: UITableViewController {
             let newViewController = storyBoard.instantiateViewController(withIdentifier: "login") as! LoginViewController
             self.present(newViewController, animated: true, completion: nil)
         } else {
-            if let link = URL(string: "https://www.google.com/") {
+            if let link = URL(string: "https://vk.com/hsewingle") {
                 UIApplication.shared.open(link)
             }
         }
