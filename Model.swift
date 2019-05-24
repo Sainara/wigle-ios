@@ -13,139 +13,123 @@ var session = Session()
 
 class Session {
     
-    let url = "https://wingle-api.krsq.me/api/v1/"
+    let url = "https://wingle-api.krsq.me/api/v2/"
     
-    var account:Account = Account()
+    var account:Account?
     var login:String = ""
-    var ListOfSubmissions:Submission = Submission()
-    var listOfForms:Forms?
-    var categories:Categories = Categories()
+    var ListOfSubmissions:SubsList = SubsList()
+    var listOfForms:FormsList = FormsList()
     var clickedForm:Int?, clikedSub:Int?
     var sub:CreateSub?
-    var SubFields:[String : UITextField] = [:]
-    var request = URLRequest(url: URL(string: "https://wingle-api.krsq.me/api/v1/")!)
-    
-    
+    var SubFields:[Int : [ String : UITextField]] = [:]
+
     init() {
-        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Accept")
     }
+    
     //////////////////////////
     /////// INIT WITH TOKEN
-    init(token:String) {
+    func InitWithToken(token:String, completion: @escaping (Bool) -> Void) {
         
-        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Accept")
+        let path = url + "user/me"
         
-        let path = url + "me"
-        request.url = URL(string: path)
+        var request = URLRequest(url: URL(string: path)!)
         request.httpMethod = "GET"
         request.setValue("Bearer " + token, forHTTPHeaderField: "Authorization")
+        
         let s = URLSession.shared
         s.dataTask(with: request) { (data, res, error) in
             if let httpResponse = res as? HTTPURLResponse {
                 if (httpResponse.statusCode != 200) {
-                    self.logOut()
+                    completion(false)
+                    return
                 }
             }
             guard let data = data else {return}
             do {
                 self.account = try JSONDecoder().decode(Account.self, from: data)
-                self.account.meta = Token(token: token)
-                self.GetPrimaryFaculty()
+                self.account?.data.token = token
+                completion(true)
+                return
             } catch {
                 print(error)
             }
-        }.resume()
+         }.resume()
+        completion(false)
+        return
     }
     
     //////////////////////////
     /////// CHECK VALID LOGIN
-    func loginExist(login:String) -> Bool {
-        if (login == "") {return false}
-        
-        let semaphore = DispatchSemaphore(value: 0)
-        var result = false
+    func loginExist(login:String, completion: @escaping (Bool) -> Void) {
         
         let parameters = ["email" : login]
         let path = url + "auth/email"
         
         var request = URLRequest(url: URL(string: path)!)
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {return false}
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {return}
         request.httpBody = httpBody
         request.httpMethod = "POST"
-        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Accept")
-        
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
         let s = URLSession.shared
         s.dataTask(with: request) { (data, res, error) in
             if let httpResponse = res as? HTTPURLResponse {
                 if (httpResponse.statusCode == 204) {
-                    result = true
+                    completion(true)
+                    return
                 }
             }
-            semaphore.signal()
-            
-            guard let data = data else {return}
-            do {
-                let json = try JSONSerialization.jsonObject(with: data, options: [])
-                print(json)
-            } catch {
-                print(error)
-            }
+            completion(false)
+            return
         }.resume()
-        
-        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        
-        return result
     }
     
     //////////////////////////
     /////// CONFIRM LOGIN
-    func loginSubmit(code:String) -> Bool {
-        if (code == "") {return false}
-        
-        let semaphore = DispatchSemaphore(value: 0)
-        var result = false
+    func loginSubmit(code:String, completion: @escaping (Bool) -> Void) {
         
         let parameters = ["email" : login, "code" : code]
         let path = url + "auth/code"
         
-        request.url = URL(string: path)!
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {return false}
+        var request = URLRequest(url: URL(string: path)!)
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {return}
         request.httpBody = httpBody
         request.httpMethod = "POST"
-        
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
         let s = URLSession.shared
         s.dataTask(with: request) { (data, res, error) in
             if let httpResponse = res as? HTTPURLResponse {
-                if (httpResponse.statusCode == 200) {
-                    result = true
-                    guard let data = data else {return}
-                    do {
-                        self.account = try JSONDecoder().decode(Account.self, from: data)
-                    } catch {
-                        print(error)
-                    }
-                    semaphore.signal()
+                print(String(httpResponse.statusCode))
+                if (httpResponse.statusCode == 200) {}
+                guard let data = data else {return}
+                do {
+                    self.account = try JSONDecoder().decode(Account.self, from: data)
+                    completion(true)
+                    return
+                } catch {
+                    print(error)
                 }
             }
-
-            }.resume()
-        
-        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        return result
+            completion(false)
+            return
+        }.resume()
     }
     
     //////////////////////////
     /////// GET SUBS
-    func GetSubmissions(view:SubmissionsViewController) {
+    func GetSubmissions(completion: @escaping (Bool) -> Void) {
+
+        let path = url + "submission"
         
-        let path = url + "users/" + account.GetID() + "/submissions?include=form"
-        request.url = URL(string: path)!
+        var request = URLRequest(url: URL(string: path)!)
         request.httpMethod = "GET"
-        request.setValue("Bearer " + account.GetToken(), forHTTPHeaderField: "Authorization")
-        
+        request.setValue("Bearer " + account!.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
         let s = URLSession.shared
         s.dataTask(with: request) { (data, res, error) in
             if let httpResponse = res as? HTTPURLResponse {
@@ -153,81 +137,92 @@ class Session {
             }
             guard let data = data else {return}
             do {
-                self.ListOfSubmissions = try JSONDecoder().decode(Submission.self, from: data)
-                DispatchQueue.main.async{
-                    view.ListOfSubmissions.reloadData()
-                    if ((view.ListOfSubmissions.numberOfRows(inSection: 0)) == 0) {
-                        view.NoSubMsg.alpha = 1
-                    }
-                    view.load.alpha = 0
-                    view.refreshControl.endRefreshing()
-                 //   view.activityIndicatorView.stopAnimating()
-                }
+                self.ListOfSubmissions = try JSONDecoder().decode(SubsList.self, from: data)
+                completion(true)
+                return
             } catch {
                 print(error)
             }
         }.resume()
+        completion(false)
+        return
     }
     
     //////////////////////////
-    /////// GET SUBS
-    func GetSubmissions() {
+    /////// GET SUB
+    func GetSubmission(completion: @escaping (SubmissionData) -> Void) {
         
-        let path = url + "users/" + account.GetID() + "/submissions?include=form"
-        request.url = URL(string: path)!
+        let path = url + "submission/" + String(clikedSub!)
+        
+        print(path)
+        
+        var request = URLRequest(url: URL(string: path)!)
         request.httpMethod = "GET"
-        request.setValue("Bearer " + account.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer " + account!.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         let s = URLSession.shared
         s.dataTask(with: request) { (data, res, error) in
             if let httpResponse = res as? HTTPURLResponse {
+                print(httpResponse.statusCode)
                 if (httpResponse.statusCode != 200) {}
             }
             guard let data = data else {return}
-            do {
-                self.ListOfSubmissions = try JSONDecoder().decode(Submission.self, from: data)
-            } catch {
-                print(error)
-            }
-        }.resume()
-    }
-    
-    //////////////////////////
-    /////// GET FACULTY
-    func GetPrimaryFaculty() {
-        
-        let path = url + "me/getDefaultCourse"
-        request.url = URL(string: path)!
-        request.httpMethod = "GET"
-        request.setValue("Bearer " + account.GetToken(), forHTTPHeaderField: "Authorization")
-        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Accept")
-
-        let s = URLSession.shared
-        s.dataTask(with: request) { (data, res, error) in
             
+
+            do {
+                let data = try JSONDecoder().decode(Submission.self, from: data)
+                completion(data.data)
+                return
+            } catch {
+                print(error)
+            }
+        }.resume()
+    }
+
+    //////////////////////////
+    /////// GET FACULTY NAME
+    func GetFacultyName(completion: @escaping (String) -> Void) {
+
+        let path = url + "course/" + String(account!.data.settings.default_course)
+        
+        var request = URLRequest(url: URL(string: path)!)
+        request.httpMethod = "GET"
+        request.setValue("Bearer " + account!.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        let s = URLSession.shared
+        s.dataTask(with: request) { (data, res, error) in
+
             if let httpResponse = res as? HTTPURLResponse {
                 if (httpResponse.statusCode != 200) {
                 }
             }
             guard let data = data else {return}
             do {
-                self.account.primaryFaculty = try JSONDecoder().decode(PrimaryFaculty.self, from: data)
+                let data = try JSONDecoder().decode(Fac.self, from: data)
+                completion(data.data.title)
+                return
             } catch {
                 print(error)
             }
         }.resume()
+        completion("Неизвестный факультет")
+        return
     }
-    
+
     //////////////////////////
-    /////// GET CATEGORIES
-    func GetCategories(view:FormsViewController) {
+    /////// GET FORMS
+    func GetForms(completion: @escaping (Bool) -> Void) {
+    
+        let path = url + "form?course_id=" + account!.GetCourse()
         
-        while (account.primaryFaculty == nil) {}
-        let path = url + "courses/" + account.primaryFaculty!.data.id + "/categories"
-        request.url = URL(string: path)!
+        var request = URLRequest(url: URL(string: path)!)
         request.httpMethod = "GET"
-        request.setValue("Bearer " + account.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer " + account!.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         let s = URLSession.shared
         s.dataTask(with: request) { (data, res, error) in
@@ -236,70 +231,61 @@ class Session {
             }
             guard let data = data else {return}
             do {
-                self.categories = try JSONDecoder().decode(Categories.self, from: data)
-                self.categories.count = self.categories.data?.count
-                self.categories.isLoaded = true
-                self.GetForms(view: view)
+                self.listOfForms = try JSONDecoder().decode(FormsList.self, from: data)
+                completion(true)
+                return
+            } catch {
+                print(error)
+            }
+        }.resume()
+        completion(false)
+        return
+    }
+    
+    //////////////////////////
+    /////// GET FORM
+    func GetForm(completion: @escaping (FormData) -> Void) {
+        
+        let path = url + "form/" + String(clickedForm!)
+        
+        var request = URLRequest(url: URL(string: path)!)
+        request.httpMethod = "GET"
+        request.setValue("Bearer " + account!.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let s = URLSession.shared
+        s.dataTask(with: request) { (data, res, error) in
+            if let httpResponse = res as? HTTPURLResponse {
+                if (httpResponse.statusCode != 200) {}
+            }
+            guard let data = data else {return}
+            print(String(data: data, encoding: .utf8))
+            do {
+                let data = try JSONDecoder().decode(Form.self, from: data)
+                print(data.data)
+                completion(data.data)
+                return
             } catch {
                 print(error)
             }
         }.resume()
     }
-    
+   
     //////////////////////////
-    /////// GET FORMS
-    func GetForms(view:FormsViewController) {
-        
-        var cur:Int = 0
-        
-        request.setValue("Bearer " + account.GetToken(), forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
+    /////// POST SUBMISSION
+    func PostSubmission(completion: @escaping (Bool) -> Void) {
 
-        for category in categories.data ?? [] {
-            
-            let path = url + "categories/" + category.id + "/forms"
-            request.url = URL(string: path)!
-            
-            let s = URLSession.shared
-            s.dataTask(with: request) { (data, res, error) in
-                if let httpResponse = res as? HTTPURLResponse {
-                    if (httpResponse.statusCode != 200) {}
-                }
-                guard let data = data else {return}
-                do {
-                    let get = try JSONDecoder().decode(Forms.self, from: data)
-                    if (self.listOfForms == nil) {
-                        self.listOfForms = get
-                    } else {
-                        for form in get.data ?? [] {
-                            self.listOfForms?.data?.append(form)
-                        }
-                    }
-                    cur += 1
-                    if (cur == self.categories.count) {
-                        self.listOfForms?.isLoaded = true
-                    }
-                    DispatchQueue.main.async{
-                        view.ListOfForms.reloadData()
-                        view.load.alpha = 0
-                    }
-                } catch {
-                    print(error)
-                }
-            }.resume()
-        }
+        let path = url + "submission"
         
-    }
-
-    func PostSubmission(view:UICreateSubViewController) {
-        
-        let path = url + "submissions?include=form"
-        request.url = URL(string: path)!
+        var request = URLRequest(url: URL(string: path)!)
         request.httpMethod = "POST"
-        request.setValue("Bearer " + account.GetToken(), forHTTPHeaderField: "Authorization")
-        
-        sub = CreateSub(formID: listOfForms!.data![session.clickedForm!].id, fields: SubFields)
-        
+        request.setValue("Bearer " + account!.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        sub = CreateSub(formID: clickedForm!, fields: SubFields)
+
         let encoder = JSONEncoder()
         guard let httpBody = try? encoder.encode(sub!) else {return}
         request.httpBody = httpBody
@@ -307,46 +293,53 @@ class Session {
         let s = URLSession.shared
         s.dataTask(with: request) { (data, res, error) in
             if let httpResponse = res as? HTTPURLResponse {
-                if (httpResponse.statusCode == 201) {
-                    
-                    do {
-                        let sub = try JSONDecoder().decode(CreatedSubmission.self, from: data!)
-                        self.clikedSub = self.ListOfSubmissions.data!.count
-                        self.ListOfSubmissions.data?.append(sub.data!)
-                    } catch {
-                        
-                    }
-                    
-                    DispatchQueue.main.async{
-                        //view.performSegue(withIdentifier: "subView", sender: nil)
-                        //[self.storyboard performseguewithidentifier:@"toSub"];
-
-                        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                        let newViewController = storyBoard.instantiateViewController(withIdentifier: "subView2")
-                        newViewController.modalTransitionStyle = .crossDissolve
-                        //
-                        //view.present(newViewController, animated: true, completion: nil)
-                        view.navigationController?.pushViewController(newViewController, animated: true)
-                    }
+                print(httpResponse.statusCode)
+                //print(String(data: data!, encoding: .utf8))
+                if (httpResponse.statusCode == 200) {
+                    completion(true)
+                    return
                 }
             }
+            completion(false)
+            return
         }.resume()
     }
     
     //////////////////////////
+    /////// DELETE SUBMISSION
+    func DeleteSubmission(completion: @escaping (Bool) -> Void) {
+        
+        let path = url + "submission/" + String(clikedSub!)
+        
+        var request = URLRequest(url: URL(string: path)!)
+        request.httpMethod = "DELETE"
+        request.setValue("Bearer " + account!.GetToken(), forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let s = URLSession.shared
+        s.dataTask(with: request) { (data, res, error) in
+            if let httpResponse = res as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if (httpResponse.statusCode == 204) {
+                    completion(true)
+                    return
+                }
+            }
+            completion(false)
+            return
+            }.resume()
+    }
+
+    //////////////////////////
     /////// LOG OUT
     func logOut() {
-        account = Account()
-        ListOfSubmissions = Submission()
-        listOfForms = nil
+        account = nil
+        ListOfSubmissions = SubsList()
+        listOfForms = FormsList()
         login = ""
         UserDefaults.standard.removeObject(forKey: "Token")
     }
-    
-    func GetSession() -> Session {
-        return self
-    }
-
 }
 
 ////////////////////////////////////////
@@ -354,188 +347,228 @@ class Session {
 ////////////////////////////////////////
 struct Account : Decodable {
     
-    var data:AccountData?, meta:Token?, primaryFaculty:PrimaryFaculty?
-    
-    func GetID() -> String {return (data?.id)!}
-    func GetToken() -> String {return (meta?.token)!}
-    func GetLastName() -> String {return data?.attributes?.last_name ?? " "}
-    func GetFistName() -> String {return data?.attributes?.first_name ?? " "}
-    func GetMiddleName() -> String {return data?.attributes?.middle_name ?? " "}
-    func GetEmail() -> String {return data?.attributes?.email ?? " "}
-    func GetPhone() -> String {return data?.attributes?.phone ?? " "}
+    var data:User
+
+    func GetCourse() -> String {return String(data.settings.default_course)}
+    func GetToken() -> String {return data.token!}
     func GetRole() -> String {
-        switch data?.attributes?.role {
+        switch data.user.type {
         case "staff":
             return "Сотрудник УО"
         case "student":
             return "Студент"
-        case "teacher":
-            return "Преподаватель"
-        case "applicant":
-            return "Абитуриент"
-        case "parent":
-            return "Родитель"
         default:
             return "Неизвестно"
         }
     }
 }
-struct Token : Decodable {
-    var token:String?
+struct User : Decodable {
+    var user:UserData, token:String?, settings:UserSettings
 }
-struct AccountData : Decodable {
-    var type:String?, id:String?
-    var attributes:AccountAttributies?
+struct UserData : Decodable {
+    var id:String, uns:String, externalId:String, type:String, fio:String, info:String
 }
-struct AccountAttributies : Decodable {
-    var first_name:String?, middle_name:String?, last_name:String?,
-    email:String?, phone:String?, role:String?
+struct UserSettings : Decodable {
+    var default_course:Int
+}
+
+
+////////////////////////////////////////
+//    LIST OF FORM STRUCT
+////////////////////////////////////////
+struct FormsList : Decodable {
+    var data:[FormFromList] = []
+}
+struct FormFromList : Decodable {
+    var id:Int, title:String = "", description:String? = ""
 }
 
 ////////////////////////////////////////
-//    SUBMISSION STRUCT
+//    LIST OF SUBS STRUCT
 ////////////////////////////////////////
-struct Submission : Decodable {
-    var data:[SubData]?, included:[FormData]?
+struct SubsList : Decodable {
+    var data:[SubFromList] = []
 }
-struct CreatedSubmission : Decodable {
-    var data:SubData?, included:[FormData]?
-}
-struct SubData : Decodable {
-    var id:String, attributes:SubmissionAttributies, relationships:RelationsData?
+struct SubFromList : Decodable {
+    var id:Int, form_id:Int, status:String = "", form:FormFromList
     
     func GetStatus() -> String {
-        switch attributes.status {
+        switch status {
         case "new":
             return "Новая"
+        case "in_progress":
+            return "В процессе"
+        case "proceeded":
+            return "Выполнен"
+        case "rejected":
+            return "Отклонён"
+        case "cancelled":
+            return "Отменён"
         default:
             return "Неопределено"
         }
     }
 }
-struct SubmissionAttributies : Decodable {
-    var status:String, data:[String:SubDatas]?, created_at:String
-}
-struct RelationsData : Decodable {
-    var form:RelForm?
-}
-struct RelForm : Decodable {
-    var data:RelFormData?
-}
-struct RelFormData : Decodable {
-    var id:String, type:String
-}
-enum SubDatas: Decodable, CustomStringConvertible {
-    
-    var description : String {
-        switch self {
 
-        case .int(let value): return String(value)
-        case .string(let value): return String(value)
-        case .array(let value):
-            var result:String = ""
-            for val in value {
-                result += val + ", "
-            }
-            return result
-        }
-    }
-    
-    case int(Int)
-    case string(String)
-    case array(Array<String>)
-    
-    init(from decoder: Decoder) throws {
-        let container =  try decoder.singleValueContainer()
-        
-        do {
-            let doubleVal = try container.decode(Int.self)
-            self = .int(doubleVal)
-        } catch DecodingError.typeMismatch {
-            do {
-                let arrayVal = try container.decode(Array<String>.self)
-                self = .array(arrayVal)
-            } catch DecodingError.typeMismatch {
-                let stringVal = try container.decode(String.self)
-                self = .string(stringVal)
-            }
-        }
-    }
+////////////////////////////////////////
+//    FACULTY NAME
+////////////////////////////////////////
+struct Fac : Decodable {
+    var data:FacData
 }
-
+struct FacData : Decodable  {
+    var title:String
+}
 
 ////////////////////////////////////////
 //    FORM STRUCT
 ////////////////////////////////////////
-struct Forms : Decodable {
-    var data:[FormData]?, isLoaded:Bool? = false
+struct Form : Decodable {
+    var data:FormData
 }
 struct FormData : Decodable {
-    var id:String, attributes:FormAttributies
-}
-struct FormAttributies : Decodable {
-    var title:String, description:String, fields:[FormField]?
-}
-struct FormField : Decodable {
-    var name:String?, type:String, title:String?, description:String?, meta:FieldMeta?
-}
-struct FieldMeta : Decodable {
-    var options:[String]?
+    var id:Int, title:String, description:String? = "", fields:[Field]
 }
 
 ////////////////////////////////////////
-//    PRIMARYFACULTY STRUCT
+//    SUBMISSION STRUCT
 ////////////////////////////////////////
-struct PrimaryFaculty : Decodable {
-    var data:FacultyData
+struct Submission : Decodable{
+    var data:SubmissionData
 }
-struct FacultyData : Decodable {
-    var id:String, attributes:FacultyAttr
-}
-struct FacultyAttr : Decodable {
-    var title:String
-}
-
-////////////////////////////////////////
-//    CATEGORIES STRUCT
-////////////////////////////////////////
-struct Categories : Decodable {
-    var data:[Category]?, count:Int? = 0, isLoaded:Bool? = false
-}
-struct Category : Decodable {
-    var id:String, attributes:CategoryAttributies
-}
-struct CategoryAttributies : Decodable {
-    var title:String
+struct SubmissionData : Decodable {
+    var id:Int, form_id:Int, status:String, form:FormData, answers:[Answer]?
+    
+    func GetStatus() -> String {
+        switch status {
+        case "new":
+            return "Новая"
+        case "in_progress":
+            return "В процессе"
+        case "proceeded":
+            return "Выполнен"
+        case "rejected":
+            return "Отклонён"
+        case "cancelled":
+            return "Отменён"
+        default:
+            return "Неопределено"
+        }
+    }
 }
 
 ////////////////////////////////////////
 //    CREATESUB STRUCT
 ////////////////////////////////////////
 struct CreateSub : Encodable {
-    var data:CreateSubData
-    
-    init(formID:String, fields:[String : UITextField]?) {
-        let form = CreateSubRel(form: CreateSubRelData(data: CreateRelFormData(id: formID, type: "forms")))
-        data = CreateSubData(type: "submissions", attributes: CreateSubAttr(data: [:]), relationships: form)
-        for field in fields! {
-            data.attributes!.data![field.key] = field.value.text
+    var form_id:Int, answers:[SendAnswer] = []
+
+    init(formID:Int, fields:[Int : [ String : UITextField]]?) {
+        form_id = formID
+        
+        for field in fields ?? [:] {
+            for type in field.value {
+                if type.key == "text" {
+                    if (type.value.text != "") {
+                        answers.append(SendAnswer.string(value: type.value.text!, field_id: field.key))
+                    }
+                } else {
+                    var data:[String] = []
+                    data.append(type.value.text ?? "")
+                    answers.append(SendAnswer.array(value: data, field_id: field.key))
+                }
+            }
         }
-        print(data.attributes!.data!)
     }
 }
-struct CreateSubData : Encodable {
-    var type:String, attributes:CreateSubAttr?, relationships:CreateSubRel?
+
+////////////////////////////////////////
+//    HELPER STRUCTS
+////////////////////////////////////////
+struct Answer : Decodable {
+    var field_id:Int, submission_id:Int?, value:String
 }
-struct CreateSubAttr : Encodable {
-    var data:[String:String]?
+
+enum SendAnswer : Encodable {
+    
+    private enum CodingKeys: String, CodingKey {
+        case field_id, value
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .string(let value, let id):
+            try container.encode(id, forKey: .field_id)
+            try container.encode(value, forKey: .value)
+        case .array(let value, let id):
+            try container.encode(id, forKey: .field_id)
+            try container.encode(value, forKey: .value)
+        }
+    }
+    
+    case string(value: String, field_id:Int)
+    case array(value: Array<String>, field_id:Int)
 }
-struct CreateSubRel : Encodable {
-    var form:CreateSubRelData?
+
+
+struct Field : Decodable {
+    var id:Int, title:String, description:String? = "", type:String, form_id:Int, required:Bool, meta:FieldMeta?
 }
-struct CreateSubRelData : Encodable{
-    var data:CreateRelFormData?
+struct FieldMeta : Decodable {
+    var options:[String]?, multiple:Bool?
 }
-struct CreateRelFormData : Encodable {
-    var id:String, type:String
+
+////////////////////////////////////////
+//    CUSTOM SELECT
+////////////////////////////////////////
+extension UITextField {
+    func loadDropdownData(data: [String]) {
+        self.inputView = MyPickerView(pickerData: data, dropdownField: self)
+    }
+}
+
+class MyPickerView : UIPickerView, UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerData.count
+    }
+    
+    var pickerData : [String]!
+    var pickerTextField : UITextField!
+    
+    init(pickerData: [String], dropdownField: UITextField) {
+        super.init(frame: .zero)
+        
+        self.pickerData = pickerData
+        self.pickerTextField = dropdownField
+
+        self.delegate = self
+        self.dataSource = self
+        
+        
+        if pickerData.count > 0 {
+            self.pickerTextField.text = self.pickerData[0]
+            self.pickerTextField.isEnabled = true
+        } else {
+            self.pickerTextField.text = nil
+            self.pickerTextField.isEnabled = false
+        }
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return pickerData[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        pickerTextField.text = pickerData[row]
+    }
 }

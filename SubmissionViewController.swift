@@ -13,54 +13,65 @@ class SubmissionViewController: UIViewController {
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
     
-    override func viewWillAppear(_ animated: Bool) {
-        var relForm:FormData?
-        for include in session.ListOfSubmissions.included ?? [] {
-            if (include.id == session.ListOfSubmissions.data?[session.clikedSub!].relationships?.form?.data?.id) {
-               relForm = include
-            }
-        }
-        titleLabel.text = relForm!.attributes.title
-        statusLabel.text = "Статус: " + session.ListOfSubmissions.data![session.clikedSub!].GetStatus()
-        var iy:Int = 200
-        var skip:Bool?, isTextArea:Bool?
+    override func viewDidAppear(_ animated: Bool) {
         
-        for key in session.ListOfSubmissions.data![session.clikedSub!].attributes.data!.keys {
-            var lb:String?
-            skip = false
-            isTextArea = false
-            for form in relForm!.attributes.fields! {
-                if (form.name! == key) {
-                    lb = form.title
-                    if (form.type == "file") {
-                        skip = true
-                    }
-                    if (form.type == "textarea") {
-                        isTextArea = true
-                    }
+        session.GetSubmission() { res in
+            DispatchQueue.main.async {
+                
+                self.titleLabel.text = res.form.title
+                self.statusLabel.text = "Статус: " + res.GetStatus()
+                var iy:Int = 180
+                
+                for ans in res.answers ?? [] {
+                    let titleLabel = UILabel(frame: CGRect(x: 23, y: iy, width: 360, height: 30))
+                    iy += 30
+                    let valueLabel = UILabel(frame: CGRect(x: 23, y: iy, width: 360, height: 30))
+                    
+                    titleLabel.text = res.form.fields.first(where: { $0.id == ans.field_id})?.title ?? " "
+                    valueLabel.text = ans.value
+                    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+                    self.view.addSubview(titleLabel)
+                    self.view.addSubview(valueLabel)
+
+                    iy += 40
+                }
+                if res.status == "new" {
+                    let delBut = UIButton(frame: CGRect(x: 20, y: iy, width: 300, height: 47))
+                    
+                    iy += 50
+                    delBut.setTitle("Удалить",for: .normal)
+                    delBut.setTitleColor(.white, for: .normal)
+                    delBut.backgroundColor = UIColor.red
+
+                    delBut.titleLabel!.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+                    delBut.layer.cornerRadius = 8
+                    delBut.addTarget(self, action: #selector(self.buttonAction(_:)), for: .touchUpInside)
+                    
+                    self.view.addSubview(delBut)
                 }
             }
-            if (skip!) {
-                continue
+        }
+    }
+    
+    @objc func buttonAction(_ sender:UIButton!) {
+        session.DeleteSubmission() { res in
+            DispatchQueue.main.async {
+                if res {
+                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    let newViewController = storyBoard.instantiateViewController(withIdentifier: "tabBarController")
+                    newViewController.modalTransitionStyle = .crossDissolve
+                    self.present(newViewController, animated: true, completion: nil)
+                } else {
+                    let alert = UIAlertController(title: "Ошибка", message: "Заявка не удалена", preferredStyle: UIAlertController.Style.alert)
+                    alert.addAction(UIAlertAction(title: "ОК", style: UIAlertAction.Style.default, handler: { (action) in
+                        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                        let newViewController = storyBoard.instantiateViewController(withIdentifier: "tabBarController")
+                        newViewController.modalTransitionStyle = .crossDissolve
+                        self.present(newViewController, animated: true, completion: nil)
+                    }))
+                    self.present(alert, animated: true, completion: nil)
+                }
             }
-            let titleLabel = UILabel(frame: CGRect(x: 23, y: iy, width: 360, height: 30))
-            let valueLabel:UILabel?
-            if (!isTextArea!) {
-                iy += 30
-                valueLabel = UILabel(frame: CGRect(x: 23, y: iy, width: 360, height: 30))
-            } else {
-                iy += 30
-                valueLabel = UILabel(frame: CGRect(x: 23, y: iy, width: 360, height: 60))
-                valueLabel?.numberOfLines = 2
-                iy += 30
-            }
-            titleLabel.text = lb
-            valueLabel!.text = session.ListOfSubmissions.data![session.clikedSub!].attributes.data![key]?.description
-            titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-            self.view.addSubview(titleLabel)
-            self.view.addSubview(valueLabel!)
-
-            iy += 50
         }
     }
     

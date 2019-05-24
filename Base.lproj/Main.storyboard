@@ -88,7 +88,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1574" y="-770"/>
+            <point key="canvasLocation" x="2404" y="-768"/>
         </scene>
         <!--Просмотр-->
         <scene sceneID="g3k-mv-JFp">
@@ -98,17 +98,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2SH-ys-vJ8">
-                                <rect key="frame" x="23" y="105" width="336" height="57"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Заявка" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2SH-ys-vJ8">
+                                <rect key="frame" x="23" y="105" width="336" height="36"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="33"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Status: NEw" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sZG-ce-bgx">
-                                <rect key="frame" x="23" y="159" width="323" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Статус:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sZG-ce-bgx">
+                                <rect key="frame" x="23" y="143" width="323" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -126,7 +126,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="maG-bD-YF2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3362.4000000000001" y="-770.68965517241384"/>
+            <point key="canvasLocation" x="3237.5999999999999" y="-768.4729064039409"/>
         </scene>
         <!--Доступные формы-->
         <scene sceneID="wg7-f3-ORb">
@@ -206,7 +206,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2516" y="0.0"/>
+            <point key="canvasLocation" x="2410" y="0.0"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="ecR-xV-F1F">
@@ -294,6 +294,7 @@
                         <outlet property="logBut" destination="X3m-pa-1mB" id="plm-25-Xau"/>
                         <outlet property="login" destination="cs0-VU-04T" id="gyl-pl-tqh"/>
                         <outlet property="sc" destination="NSu-kT-b9A" id="HHt-CZ-476"/>
+                        <segue destination="lhY-cs-wfU" kind="show" id="GFf-ji-vu2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="go5-4k-mEz" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -301,7 +302,7 @@
             </objects>
             <point key="canvasLocation" x="-1404" y="0.0"/>
         </scene>
-        <!--Submit Login View Controller-->
+        <!--Авторизация-->
         <scene sceneID="U2l-zv-nRn">
             <objects>
                 <viewController storyboardIdentifier="SubmitLogin" id="Df0-uP-Jfw" customClass="SubmitLoginViewController" customModule="HSE_App" customModuleProvider="target" sceneMemberID="viewController">
@@ -309,13 +310,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Y1-mJ-Xmn">
-                                <rect key="frame" x="0.0" y="44" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <items>
-                                    <navigationItem title="Авторизация" id="5bN-7r-pd1"/>
-                                </items>
-                            </navigationBar>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="На вашу почту ************@edu.hse.ru было выслано письмо с кодом подтверждения. Введите его ниже." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xkE-E3-dnP">
                                 <rect key="frame" x="16" y="255" width="343" height="84"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -366,7 +360,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="qo3-E8-T9q"/>
                     </view>
-                    <navigationItem key="navigationItem" id="gOW-SV-J3X"/>
+                    <navigationItem key="navigationItem" title="Авторизация" id="gOW-SV-J3X"/>
                     <connections>
                         <outlet property="codeField" destination="egk-Gx-5Jf" id="ZC8-AB-6Jh"/>
                         <outlet property="contBut" destination="UQL-2F-xdN" id="6Kf-vb-pjR"/>
@@ -375,7 +369,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VQV-UB-YWL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="239.19999999999999" y="0.0"/>
+            <point key="canvasLocation" x="46" y="0.0"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -394,7 +388,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="941.60000000000002" y="0.0"/>
+            <point key="canvasLocation" x="748" y="0.0"/>
         </scene>
         <!--Профиль-->
         <scene sceneID="9sJ-LP-6i0">
@@ -415,8 +409,8 @@
                                 <rect key="frame" x="0.0" y="18" width="375" height="173"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Константинов Константин" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FXq-17-6Ah">
-                                        <rect key="frame" x="18" y="48" width="337" height="26"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Константинов Константин" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FXq-17-6Ah">
+                                        <rect key="frame" x="18" y="48" width="337" height="53"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="21"/>
                                         <nil key="textColor"/>
@@ -427,13 +421,6 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Константинович" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ymT-C4-hrg">
-                                        <rect key="frame" x="18" y="75" width="231" height="26"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="21"/>
-                                        <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="kkkonstaninov@edu.hse.ru" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qXh-m7-uuZ">
@@ -464,15 +451,14 @@
                     <connections>
                         <outlet property="email" destination="qXh-m7-uuZ" id="6Ai-br-OlZ"/>
                         <outlet property="grade" destination="1R3-WY-eFb" id="VrN-CY-w54"/>
+                        <outlet property="info" destination="ewo-pb-3ct" id="Vpn-l6-h2F"/>
                         <outlet property="infoContainer" destination="u0g-je-XJX" id="FNf-zg-cP6"/>
                         <outlet property="mainName" destination="FXq-17-6Ah" id="kOl-g7-BDK"/>
-                        <outlet property="middleName" destination="ymT-C4-hrg" id="r0d-fC-xuw"/>
-                        <outlet property="phone" destination="ewo-pb-3ct" id="x73-XX-ayk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O0T-iB-jo9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1615" y="750"/>
+            <point key="canvasLocation" x="1613.5999999999999" y="750"/>
         </scene>
         <!--Setting Table View Controller-->
         <scene sceneID="ozm-Re-Wz8">
@@ -499,7 +485,7 @@
                                                     <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="icons8-ÐºÐ¾ÑÐ¾Ð±ÐºÐ°-25" id="Hpu-Rm-IV2">
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="icons8-Ð´Ð¾ÐºÑÐ¼ÐµÐ½Ñ-filled-50" id="Hpu-Rm-IV2">
                                                     <rect key="frame" x="16" y="9" width="25" height="25"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </imageView>
@@ -520,7 +506,7 @@
                                                     <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="icons8-ÐºÐ¾Ð½ÑÐ°ÐºÑÑ-25" id="cTP-Lh-TN2">
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="icons8-ÑÑÑÐ»ÐºÐ°-50" id="cTP-Lh-TN2">
                                                     <rect key="frame" x="16" y="9" width="25" height="25"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </imageView>
@@ -567,6 +553,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="dLG-w8-RLq">
+                                <rect key="frame" x="177" y="396" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                             <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bm7-H5-DTB">
                                 <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
@@ -576,20 +566,20 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kXR-VJ-wrG">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kXR-VJ-wrG" customClass="LoginScrollView" customModule="HSE_App" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="164" width="375" height="565"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <directionalEdgeInsets key="directionalLayoutMargins" top="8" leading="8" bottom="8" trailing="8"/>
                             </scrollView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I8N-Dn-aGl">
-                                <rect key="frame" x="16" y="103" width="343" height="27"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Заявление" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I8N-Dn-aGl">
+                                <rect key="frame" x="16" y="104" width="343" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b1q-pb-uox">
-                                <rect key="frame" x="16" y="128" width="343" height="27"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Описание" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b1q-pb-uox">
+                                <rect key="frame" x="16" y="129" width="343" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
                                 <nil key="textColor"/>
@@ -605,14 +595,13 @@
                     <connections>
                         <outlet property="formDesc" destination="b1q-pb-uox" id="dTC-Ck-Mmo"/>
                         <outlet property="formTitle" destination="I8N-Dn-aGl" id="KzE-gS-qVX"/>
+                        <outlet property="load" destination="dLG-w8-RLq" id="nnz-dd-yNj"/>
                         <outlet property="sc" destination="kXR-VJ-wrG" id="rbt-IZ-wQu"/>
-                        <segue destination="gwD-IN-ekZ" kind="show" id="Mqt-g4-r6u"/>
-                        <segue destination="YAy-xm-r74" kind="show" identifier="toSub" id="OTt-rB-r9H"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qfa-os-11A" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3362" y="0.0"/>
+            <point key="canvasLocation" x="3255" y="0.0"/>
         </scene>
         <!--Создать-->
         <scene sceneID="9qP-ec-Rqf">
@@ -631,7 +620,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jrx-hG-3yJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1690.4000000000001" y="0.0"/>
+            <point key="canvasLocation" x="1585" y="0.0"/>
         </scene>
         <!--Архив-->
         <scene sceneID="S7l-bb-4K4">
@@ -650,7 +639,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SDf-0c-Cf6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="748" y="-769.95073891625623"/>
+            <point key="canvasLocation" x="1578" y="-768"/>
         </scene>
         <!--Профиль-->
         <scene sceneID="OML-Q1-KRp">
@@ -689,27 +678,11 @@
             </objects>
             <point key="canvasLocation" x="-703.20000000000005" y="0.0"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="0TZ-pQ-w7f">
-            <objects>
-                <navigationController storyboardIdentifier="subView" automaticallyAdjustsScrollViewInsets="NO" id="gwD-IN-ekZ" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="la8-eu-Jg0">
-                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="YAy-xm-r74" kind="relationship" relationship="rootViewController" id="SWd-xQ-HGM"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="37f-97-05Y" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2420" y="-770.68965517241384"/>
-        </scene>
     </scenes>
     <resources>
+        <image name="icons8-ÑÑÑÐ»ÐºÐ°-50" width="25" height="25"/>
         <image name="icons8-sign-out-filled-25" width="25" height="25"/>
+        <image name="icons8-Ð´Ð¾ÐºÑÐ¼ÐµÐ½Ñ-filled-50" width="25" height="25"/>
         <image name="icons8-ÐºÐ¾ÑÐ¾Ð±ÐºÐ°-25" width="25" height="25"/>
         <image name="icons8-ÐºÐ¾ÑÐ¾Ð±ÐºÐ°-filled-25" width="25" height="25"/>
         <image name="icons8-ÐºÐ¾Ð½ÑÐ°ÐºÑÑ-25" width="25" height="25"/>
@@ -719,7 +692,4 @@
         <image name="newMail" width="512" height="512"/>
         <image name="plus-25" width="25" height="25"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="OTt-rB-r9H"/>
-    </inferredMetricsTieBreakers>
 </document>

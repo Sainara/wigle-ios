@@ -1,5 +1,5 @@
 //
-//  Login.swift
+//  LoginViewController.swift
 //  HSE App
 //
 //  Created by Ян Мелоян on 09/04/2019.

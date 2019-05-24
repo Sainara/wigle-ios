@@ -16,26 +16,38 @@ class SubmitLoginViewController: UIViewController {
     
     @IBAction func codeSubmit(_ sender: Any) {
         
-        if (session.loginSubmit(code: codeField.text ?? "")) {
-            
-    
-            UserDefaults.standard.set(session.account.GetToken(), forKey: "Token")
-            
-            session = Session(token: session.account.GetToken())
-            
-            while (session.account.data == nil) {}
-            
-            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let newViewController = storyBoard.instantiateViewController(withIdentifier: "tabBarController")
-            newViewController.modalTransitionStyle = .crossDissolve
-            self.present(newViewController, animated: true, completion: nil)
-            
-        } else {
-            let alert = UIAlertController(title: "Ошибка", message: "Неправильный код", preferredStyle: UIAlertController.Style.alert)
-            alert.addAction(UIAlertAction(title: "ОК", style: UIAlertAction.Style.default, handler: { (action) in
-                alert.dismiss(animated: true, completion: nil)
-            }))
-            self.present(alert, animated: true, completion: nil)
+        let loadAlert = UIAlertController(title: nil, message: "Загрузка...", preferredStyle: .alert)
+        
+        let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = UIActivityIndicatorView.Style.gray
+        loadingIndicator.startAnimating();
+        
+        loadAlert.view.addSubview(loadingIndicator)
+        present(loadAlert, animated: true, completion: nil)
+        
+        session.loginSubmit(code: codeField.text ?? "") { res in
+            DispatchQueue.main.async{
+                if res {
+                    UserDefaults.standard.set(session.account!.data.token, forKey: "Token")
+                    
+                    loadAlert.dismiss(animated: false, completion: nil)
+                    
+                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    let newViewController = storyBoard.instantiateViewController(withIdentifier: "tabBarController")
+                    newViewController.modalTransitionStyle = .crossDissolve
+                    self.present(newViewController, animated: true, completion: nil)
+                    
+                } else {
+                    let alert = UIAlertController(title: "Ошибка", message: "Неправильный код", preferredStyle: UIAlertController.Style.alert)
+                    alert.addAction(UIAlertAction(title: "ОК", style: UIAlertAction.Style.default, handler: { (action) in
+                        alert.dismiss(animated: true, completion: nil)
+                    }))
+                    loadAlert.dismiss(animated: false) {
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+            }
         }
     }
     @IBAction func BackClick(_ sender: Any) {
@@ -46,7 +58,6 @@ class SubmitLoginViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        navigationController?.navigationBar.prefersLargeTitles = true
         subMsg.text = "На вашу почту " + session.login + " было выслано письмо с кодом подтверждения. Введите его ниже."
         contBut.layer.cornerRadius = 8
         

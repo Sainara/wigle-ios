@@ -1,5 +1,5 @@
 //
-//  Settings.swift
+//  SettingsViewController.swift
 //  HSE App
 //
 //  Created by Ян Мелоян on 17/01/2019.
@@ -41,7 +41,13 @@ class SettingTableViewController: UITableViewController {
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let newViewController = storyBoard.instantiateViewController(withIdentifier: "login") as! LoginViewController
             self.present(newViewController, animated: true, completion: nil)
-        } else {
+        }
+        if (indexPath.row == 1) {
+            if let link = URL(string: "https://vk.com/tommywayss") {
+                UIApplication.shared.open(link)
+            }
+        }
+        if (indexPath.row == 0) {
             if let link = URL(string: "https://vk.com/hsewingle") {
                 UIApplication.shared.open(link)
             }
